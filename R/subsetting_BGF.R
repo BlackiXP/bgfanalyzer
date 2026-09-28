@@ -202,7 +202,7 @@ merge_BGF=function(x,y,mergeParam=FALSE,x_tag=NULL,y_tag=NULL,name=NULL){
 
     if(isTRUE(is.null(name))) name="mergedBGF"
 
-    if(isTRUE(is.null(x$ExpParam[["name"]]))) x$ExpParam[["name"]] <- name
+    x$ExpParam[["name"]] <- name
   }
 
   return(x)
