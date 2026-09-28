@@ -82,7 +82,7 @@ netGas=function(x,purity=1,substract_blank=TRUE,pos=7,feedback=FALSE){
     # give feedback
     if(isTRUE(feedback)){
       m1 <- paste0("Blank gas volume substracted from sample gas volume (",x$ExpParam$name,")...")
-      
+
       message(m1)
       }
   }else{
@@ -95,7 +95,7 @@ netGas=function(x,purity=1,substract_blank=TRUE,pos=7,feedback=FALSE){
     # give feedback
     if(isTRUE(feedback)){
       m1 <- paste0("No blank gas volume substracted from sample gas volume (",x$ExpParam$name,")...")
-                               
+
       message(m1)
       }
 
@@ -159,7 +159,7 @@ netGasGC=function(x,purity,percent=TRUE,substract_blank=TRUE,pos=7,na_replace=0,
   }
   for(q in levels(x$BioGasData$reactor)){
 
-  if(is.character(purity)) purity=grep(purity,names(x$BioGasData))
+  if(is.character(purity)) purity=which(names(x$BioGasData)==purity)
 
   x$BioGasData$net_product[which(x$BioGasData$reactor==q)[1]]=na_replace*x$BioGasData[which(x$BioGasData$reactor==q)[1],purity]
 
@@ -203,7 +203,7 @@ netGasGC=function(x,purity,percent=TRUE,substract_blank=TRUE,pos=7,na_replace=0,
     # give feedback
     if(isTRUE(feedback)){
       m1 <- paste0("Blank gas volume substracted from sample gas volume (",x$ExpParam$name,")...")
-      
+
       message(m1)
       }
 
