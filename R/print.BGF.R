@@ -15,7 +15,7 @@ print.BGF<-function(x,...){
 
     l1=sprintf(gettext("'%s' - a BGF with %d fermentation(s)"),x$ExpParam$name,nrow(x$metaData))
 
-    l2=sprintf(gettext("$ExpParam: %d experimental paramerters"),length(x$ExpParam))
+    l2=sprintf(gettext("$ExpParam: %d experimental parameters"),length(x$ExpParam))
 
     l3=sprintf(gettext("$metaData: %d meta variables"),length(colnames(x$metaData)))
 
