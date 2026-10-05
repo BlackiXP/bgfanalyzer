@@ -39,4 +39,4 @@ Depends:
     R (>= 3.5)
 Config/roxygen2/version: 8.1.0
 VignetteBuilder: knitr
-URL: https://github.com/BlackiXP/bgfanalyze
+URL: https://github.com/BlackiXP/bgfanalyzer
