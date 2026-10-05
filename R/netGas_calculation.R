@@ -60,16 +60,16 @@ netGas=function(x,purity=1,substract_blank=TRUE,pos=7,feedback=FALSE){
     df<-subset(x[["BioGasData"]],x[["BioGasData"]][,"reactor"]%in%blanks) # subset to have only BioGasData of blanks
     df<-subset(df,!df[,"reactor"]%in%excl) # exclude a blank if needed
 
-    vBlank=dplyr::pull(dplyr::reframe(product=mean(as.numeric(.data$product),rm.na=TRUE),.by = .data$time,.data = df),.data$product) # calculate the mean gas volume produced by the blanks
+    vBlank=dplyr::pull(dplyr::reframe(product=mean(as.numeric(.data$product),na.rm=TRUE),.by = .data$time,.data = df),.data$product) # calculate the mean gas volume produced by the blanks
     names(vBlank)=as.character(dplyr::pull(dplyr::reframe(time=mean(as.numeric(.data$time)),.by = .data$time,.data = df),.data$time)) # name each volume by its respective time
 
     meta<-x[["metaData"]] # extract 'metaData'
 
     mBlbank<-subset(meta,meta$Blank==TRUE) # subset 'metaData' to have only obs  of the blank reactors
-    mBlbank<-mean(as.numeric(dplyr::pull(subset(mBlbank,mBlbank$Excluded==FALSE),pos))) # get the mass of organics stored at 'pos' in 'metaData'
+    mBlbank<-mean(as.numeric(subset(mBlbank,mBlbank$Excluded==FALSE)[,pos])) # get the mass of organics stored at 'pos' in 'metaData'
 
 
-    mBlank_Sample<-as.numeric(dplyr::pull(meta,pos)) # get the masses of all reactors as stored at 'pos' in 'metaData'
+    mBlank_Sample<-as.numeric(meta[[pos]]) # get the masses of all reactors as stored at 'pos' in 'metaData'
     names(mBlank_Sample)<-rownames(meta) # name the masses by the respective reactors
 
 
@@ -181,16 +181,16 @@ netGasGC=function(x,purity,percent=TRUE,substract_blank=TRUE,pos=7,na_replace=0,
     df<-subset(x[["BioGasData"]],x[["BioGasData"]][,"reactor"]%in%blanks) # subset to have only BioGasData of blanks
     df<-subset(df,!df[,"reactor"]%in%excl) # exclude a blank if needed
 
-    vBlank=dplyr::pull(dplyr::reframe(net_product=mean(as.numeric(.data$net_product),rm.na=TRUE),.by = .data$time,.data = df),.data$net_product) # calculate the mean gas volume produced by the blanks
+    vBlank=dplyr::pull(dplyr::reframe(net_product=mean(as.numeric(.data$net_product),na.rm=TRUE),.by = .data$time,.data = df),.data$net_product) # calculate the mean gas volume produced by the blanks
     names(vBlank)=as.character(dplyr::pull(dplyr::reframe(time=mean(as.numeric(.data$time)),.by = .data$time,.data = df),.data$time)) # name each volume by its respective time
 
     meta<-x[["metaData"]] # extract 'metaData'
 
     mBlbank<-subset(meta,meta$Blank==TRUE) # subset 'metaData' to have only obs  of the blank reactors
-    mBlbank<-mean(as.numeric(dplyr::pull(subset(mBlbank,mBlbank$Excluded==FALSE),pos))) # get the mass of organics stored at 'pos' in 'metaData'
+    mBlbank<-mean(as.numeric(subset(mBlbank,mBlbank$Excluded==FALSE)[,pos])) # get the mass of organics stored at 'pos' in 'metaData'
 
 
-    mBlank_Sample<-as.numeric(dplyr::pull(meta,pos)) # get the masses of all reactors as stored at 'pos' in 'metaData'
+    mBlank_Sample<-as.numeric(meta[[pos]]) # get the masses of all reactors as stored at 'pos' in 'metaData'
     names(mBlank_Sample)<-rownames(meta) # name the masses by the respective reactors
 
 
