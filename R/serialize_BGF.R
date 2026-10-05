@@ -1,27 +1,46 @@
-#' Transform a continious BGF into a serialized BGF by time
+#' Transform a continuous BGF into a serialized BGF by time
 #'
 #' A function that allows to split the data of a one fermentation BGF into a serialized form.
 #' It splits the BGF's BioGasData after a given hydraulic retention time (HRT) so that after each HRT a new replicate begins.
 #' New replicates are added to metaData and it is possible to recalculate the yield
 #'
+#' This function is meant to transform a BGF build from the record of a continuous fermentation.
+#' This transformation is achieved over the recored `time` and a provided hydraulic retention time (HRT; `hrt`) value.
+#' In a continuous fermentation, the HRT reflects the time until a the whole (liquid) reactor volume was exchanged once.
+#' This serialization allows to visualize a continuous process as a aggregation of replicates, which reveals whether stable process conditions are established or not.
+#'
 #' @param x a `BGF`
 #' @param hrt `numeric` - e.g. the hydraulic retention time or any other time value to be used to split `BioGasData`
-#' @param metaData description
-#' @param name description
-#' @param MeasurmentType description
-#' @param calc_yield description
+#' @param keep_metaData `logic` defaults to `TRUE`. If `FALSE`, `metaData` of the `BGF` will be deleted so that only the three standard values (`Layout`, `Blank` and `Excluded`) remain. These will be the same as in the original `BGF` for all replicates resulting from the transformation
+#' @param name defaults to `NULL`; if set, must be a `character` providing the new `name` of the `BGF`
+#' @param MeasurementType defaults to `NULL`; if set, must be a `character` providing the new `MeasurementType` of the `BGF`
+#' @param calc_yield defaults to `NULL`; can be a `numeric` or a `character` if `keep_metaData` is `TRUE`. Then it must reference a column with a yield calculation basis (e.g. total organics in fermentation) in `metaData` of the `BGF`. If `keep_metaData` is `FALSE`, must be a `numeric` providing a basis to be used for the yield calculation.
 #' @inheritDotParams bgfanalyzer::netGasGC
+#'
+#' @returns a `BGF`
+#'
+#' @examples
+#' # example code
+#' myBGF <- from_standard_record(
+#'         ReactorLayout = "A",
+#'         ProcessTemp = 80,
+#'         InocToSubRatio = .1,
+#'         path = base::system.file("extdata","Fermentation_A.tsv",package ="bgfanalyzer"),
+#'         time_col = 1,
+#'         product_col = 3)
+#'
+#' myBGF$BioGasData <- myBGF$BioGasData[which(is.na(myBGF$BioGasData$time)==FALSE),]
+#'
+#' myBGF <- serialize_by_HRT(myBGF,24,FALSE)
 #'
 #' @export
 
 
 serialize_by_HRT=function(x,hrt,keep_metaData=TRUE,name=NULL,MeasurementType=NULL,calc_yield=NULL,...){
   df<-x$BioGasData
-  df$xHRT <- as.numeric(
-    substr(
-      as.character(
+  df$xHRT <- as.integer(
         as.numeric(df$time)/hrt+1
-      ),1,1))
+      )
 
   for(i in c(2:max(df$xHRT))) {
     df$time[which(df$xHRT==i)]=df$time[which(df$xHRT==i)]-min(df$time[which(df$xHRT==i)])
