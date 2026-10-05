@@ -2,7 +2,7 @@
 % Please edit documentation in R/serialize_BGF.R
 \name{serialize_by_HRT}
 \alias{serialize_by_HRT}
-\title{Transform a continious BGF into a serialized BGF by time}
+\title{Transform a continuous BGF into a serialized BGF by time}
 \usage{
 serialize_by_HRT(
   x,
@@ -19,9 +19,13 @@ serialize_by_HRT(
 
 \item{hrt}{\code{numeric} - e.g. the hydraulic retention time or any other time value to be used to split \code{BioGasData}}
 
-\item{name}{description}
+\item{keep_metaData}{\code{logic} defaults to \code{TRUE}. If \code{FALSE}, \code{metaData} of the \code{BGF} will be deleted so that only the three standard values (\code{Layout}, \code{Blank} and \code{Excluded}) remain. These will be the same as in the original \code{BGF} for all replicates resulting from the transformation}
 
-\item{calc_yield}{description}
+\item{name}{defaults to \code{NULL}; if set, must be a \code{character} providing the new \code{name} of the \code{BGF}}
+
+\item{MeasurementType}{defaults to \code{NULL}; if set, must be a \code{character} providing the new \code{MeasurementType} of the \code{BGF}}
+
+\item{calc_yield}{defaults to \code{NULL}; can be a \code{numeric} or a \code{character} if \code{keep_metaData} is \code{TRUE}. Then it must reference a column with a yield calculation basis (e.g. total organics in fermentation) in \code{metaData} of the \code{BGF}. If \code{keep_metaData} is \code{FALSE}, must be a \code{numeric} providing a basis to be used for the yield calculation.}
 
 \item{...}{
   Arguments passed on to \code{\link[bgfanalyzer:netGasGC]{bgfanalyzer::netGasGC}}
@@ -33,13 +37,33 @@ serialize_by_HRT(
     \item{\code{percent}}{\code{logic}; default is \code{TRUE}. Are the values in the column referenced by the 'purity' argument in percent or in an interval from 0 to 1?}
     \item{\code{na_replace}}{a \code{numeric}. The default assumed concentration of target gas at the beginning of the fermentation.}
   }}
-
-\item{metaData}{description}
-
-\item{MeasurmentType}{description}
+}
+\value{
+a \code{BGF}
 }
 \description{
 A function that allows to split the data of a one fermentation BGF into a serialized form.
 It splits the BGF's BioGasData after a given hydraulic retention time (HRT) so that after each HRT a new replicate begins.
 New replicates are added to metaData and it is possible to recalculate the yield
+}
+\details{
+This function is meant to transform a BGF build from the record of a continuous fermentation.
+This transformation is achieved over the recored \code{time} and a provided hydraulic retention time (HRT; \code{hrt}) value.
+In a continuous fermentation, the HRT reflects the time until a the whole (liquid) reactor volume was exchanged once.
+This serialization allows to visualize a continuous process as a aggregation of replicates, which reveals whether stable process conditions are established or not.
+}
+\examples{
+# example code
+myBGF <- from_standard_record(
+        ReactorLayout = "A",
+        ProcessTemp = 80,
+        InocToSubRatio = .1,
+        path = base::system.file("extdata","Fermentation_A.tsv",package ="bgfanalyzer"),
+        time_col = 1,
+        product_col = 3)
+
+myBGF$BioGasData <- myBGF$BioGasData[which(is.na(myBGF$BioGasData$time)==FALSE),]
+
+myBGF <- serialize_by_HRT(myBGF,24,FALSE)
+
 }
