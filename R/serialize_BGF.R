@@ -17,11 +17,9 @@
 
 serialize_by_HRT=function(x,hrt,keep_metaData=TRUE,name=NULL,MeasurementType=NULL,calc_yield=NULL,...){
   df<-x$BioGasData
-  df$xHRT <- as.numeric(
-    substr(
-      as.character(
+  df$xHRT <- as.integer(
         as.numeric(df$time)/hrt+1
-      ),1,1))
+      )
 
   for(i in c(2:max(df$xHRT))) {
     df$time[which(df$xHRT==i)]=df$time[which(df$xHRT==i)]-min(df$time[which(df$xHRT==i)])
